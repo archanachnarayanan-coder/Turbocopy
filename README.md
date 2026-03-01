@@ -37,7 +37,6 @@ python build.py
 
 The output goes to `dist/` — `TurboCopy.exe` (Windows) or `TurboCopy` (Mac). Users can run it without Python.
 
-**Note:** The Mac binary must be built on a Mac. Build the Windows exe on Windows, and the Mac binary on macOS, then upload both to your GitHub Release.
 
 ## How to Run
 
