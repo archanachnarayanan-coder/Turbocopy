@@ -12,7 +12,7 @@ a = Analysis(
     hiddenimports=['tkinter'],
     hookspath=[],
     hooksconfig={},
-    runtime_hooks=[],
+    runtime_hooks=['pyi_rth_turbocopy.py'],
     excludes=[],
     noarchive=False,
 )

@@ -1,5 +1,19 @@
 # Debugging TurboCopy.app Crash on Mac
 
+## "macOS 26 required, have instead 16" Error
+
+Your Python was built for a newer macOS than you're running. **Fix: Build with Python 3.11** (not 3.13).
+
+1. Install Python 3.11 from https://www.python.org/downloads/release/python-3119/
+2. Use it to build:
+   ```bash
+   python3.11 -m pip install pyinstaller
+   python3.11 -m PyInstaller --noconfirm turbo_copy_mac.spec
+   ```
+3. The resulting TurboCopy.app should run on your Mac.
+
+---
+
 ## Step 0: Test if Python version works
 
 ```bash

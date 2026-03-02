@@ -12,7 +12,7 @@ a = Analysis(
     hiddenimports=['tkinter'],
     hookspath=[],
     hooksconfig={},
-    runtime_hooks=[],
+    runtime_hooks=['pyi_rth_turbocopy.py'],  # Set TK_SILENCE_DEPRECATION before tkinter
     excludes=[],
     noarchive=False,
 )

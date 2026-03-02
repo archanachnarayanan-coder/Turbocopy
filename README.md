@@ -37,10 +37,9 @@ python build.py
 
 The output goes to `dist/` — `TurboCopy.exe` (Windows) or `TurboCopy.app` (Mac). Users can run without Python.
 
-<<<<<<< HEAD
 **Note:** Build on each platform: Windows for .exe, Mac for .app. Zip `TurboCopy.app` before uploading to GitHub.
-=======
->>>>>>> afabfd3107602d0dbd07a6d63920e1b6ee7538fd
+
+**Mac build requirement:** Use Python 3.10 or 3.11 from python.org. Python 3.13 may require a newer macOS than you have — if the app crashes with "macOS 26 required", rebuild with Python 3.11.
 
 ## How to Run
 
