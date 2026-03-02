@@ -9,12 +9,13 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['tkinter'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
+    collect_all=['tkinter'],  # Ensure tcl/tk fully bundled for Mac .app
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)

@@ -15,6 +15,7 @@ import platform
 from datetime import datetime
 
 IS_WINDOWS = platform.system() == "Windows"
+IS_MAC = platform.system() == "Darwin"
 
 
 class TurboCopyGUI:
@@ -37,10 +38,13 @@ class TurboCopyGUI:
         self.style.configure("TFrame", background=self.bg_color)
         self.style.configure("TButton", background=self.charcoal, foreground="white", padding=(8, 4))
         self.style.map("TButton", background=[("active", "#5A5A5A")])
-        self.very_light_grey = "#FAFAFA"   # Very very light grey, almost white
+        self.very_light_grey = "#FAFAFA"
         self.style.configure("TEntry", fieldbackground=self.very_light_grey, foreground=self.charcoal)
         self.style.configure("TCheckbutton", background=self.bg_color, foreground=self.text_color)
         self.style.configure("Vertical.TScrollbar", troughcolor="#E8E8E8", background="#B0B0B0")
+        # Use system fonts on Mac (Segoe UI/Consolas are Windows-only)
+        self.font_ui = "Segoe UI" if IS_WINDOWS else "Helvetica Neue"
+        self.font_mono = "Consolas" if IS_WINDOWS else "Menlo"
         self.style.map("Vertical.TScrollbar", background=[("active", "#4A4A4A")])
 
         self.setup_ui()
@@ -59,7 +63,7 @@ class TurboCopyGUI:
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Source section
-        ttk.Label(main_frame, text="Source Folder:", font=("Segoe UI", 10, "bold")).grid(
+        ttk.Label(main_frame, text="Source Folder:", font=(self.font_ui, 10, "bold")).grid(
             row=0, column=0, sticky=tk.W, pady=(0, 5)
         )
         self.source_var = tk.StringVar()
@@ -72,7 +76,7 @@ class TurboCopyGUI:
         ttk.Button(source_frame, text="Browse...", command=self.browse_source).grid(row=0, column=1)
 
         # Destination section
-        ttk.Label(main_frame, text="Destination Folder:", font=("Segoe UI", 10, "bold")).grid(
+        ttk.Label(main_frame, text="Destination Folder:", font=(self.font_ui, 10, "bold")).grid(
             row=2, column=0, sticky=tk.W, pady=(0, 5)
         )
         self.dest_var = tk.StringVar()
@@ -96,7 +100,7 @@ class TurboCopyGUI:
         ).pack(side=tk.LEFT, padx=(0, 20))
 
         # Progress / Status
-        ttk.Label(main_frame, text="Copy Progress:", font=("Segoe UI", 10, "bold")).grid(
+        ttk.Label(main_frame, text="Copy Progress:", font=(self.font_ui, 10, "bold")).grid(
             row=5, column=0, sticky=tk.W, pady=(0, 5)
         )
 
@@ -110,20 +114,20 @@ class TurboCopyGUI:
         self.progress_label = ttk.Label(
             progress_frame,
             textvariable=self.progress_var,
-            font=("Segoe UI", 14, "bold"),
+            font=(self.font_ui, 14, "bold"),
             wraplength=600,
         )
         self.progress_label.pack(anchor=tk.W, pady=(0, 5))
 
         # Console - scrollable list of files being copied
-        ttk.Label(progress_frame, text="Files copied:", font=("Segoe UI", 9, "bold")).pack(anchor=tk.W, pady=(5, 2))
+        ttk.Label(progress_frame, text="Files copied:", font=(self.font_ui, 9, "bold")).pack(anchor=tk.W, pady=(5, 2))
         self.console_frame = tk.Frame(progress_frame)
         self.console_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 5))
         self.cons_y = ttk.Scrollbar(self.console_frame, orient=tk.VERTICAL)
         self.console = tk.Text(
             self.console_frame,
             height=12,
-            font=("Consolas", 9),
+            font=(self.font_mono, 9),
             bg=self.very_light_grey,
             fg=self.charcoal,
             insertbackground=self.text_color,
@@ -140,7 +144,7 @@ class TurboCopyGUI:
         self.log_path_label = tk.Label(
             progress_frame,
             textvariable=self.log_path_var,
-            font=("Segoe UI", 9),
+            font=(self.font_ui, 9),
             fg=self.charcoal,
             bg=self.bg_color,
             wraplength=600,
@@ -246,8 +250,14 @@ class TurboCopyGUI:
 
         source_folder_name = os.path.basename(source.rstrip(os.sep))
         effective_dest = os.path.join(dest, source_folder_name)
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.log_file = os.path.join(script_dir, "copy_log.txt")
+        # Use writable dir: app bundle is read-only on Mac; Downloads may be read-only
+        if getattr(sys, "frozen", False) and IS_MAC:
+            log_dir = os.path.join(os.path.expanduser("~"), "Library", "Logs", "TurboCopy")
+            os.makedirs(log_dir, exist_ok=True)
+            self.log_file = os.path.join(log_dir, "copy_log.txt")
+        else:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            self.log_file = os.path.join(script_dir, "copy_log.txt")
         self.log_path_var.set(f"Log: {self.log_file}")
 
         def count_then_copy():
@@ -330,7 +340,8 @@ class TurboCopyGUI:
         dest_slash = dest.rstrip("/") + "/"
         os.makedirs(dest, exist_ok=True)
 
-        cmd = ["rsync", "-av"]
+        rsync_path = "/usr/bin/rsync" if IS_MAC else "rsync"  # Full path on Mac (PATH may be minimal in .app)
+        cmd = [rsync_path, "-av"]
         if not self.copy_subdirs_var.get():
             cmd.extend(["--exclude=*/"])  # Top-level files only, no subdirectories
 
@@ -508,6 +519,21 @@ class TurboCopyGUI:
         self.root.mainloop()
 
 
+def main():
+    try:
+        app = TurboCopyGUI()
+        app.run()
+    except Exception as e:
+        import traceback
+        err = traceback.format_exc()
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            messagebox.showerror("TurboCopy Error", f"Failed to start:\n\n{str(e)}\n\nSee Console for details.")
+        except Exception:
+            print("TurboCopy failed to start:", file=sys.stderr)
+            print(err, file=sys.stderr)
+        raise
+
 if __name__ == "__main__":
-    app = TurboCopyGUI()
-    app.run()
+    main()
