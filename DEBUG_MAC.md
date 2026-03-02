@@ -1,18 +1,40 @@
 # Debugging TurboCopy.app Crash on Mac
 
-If the app crashes on open, run it from Terminal to see the error:
+## Step 0: Test if Python version works
 
 ```bash
-# Go to the folder containing TurboCopy.app
-cd ~/Downloads   # or wherever you extracted it
+cd ~/Turbocopy
+python3 turbo_copy.py
+```
 
-# Run and show any errors
+If this works, the issue is with the PyInstaller build. If it crashes too, the issue is in the code or your Python/tkinter setup.
+
+## Step 1: Build a debug version (shows errors)
+
+```bash
+cd ~/Turbocopy
+git pull
+python3 build.py --debug
+```
+
+This creates a debug build. When you run it, a **Terminal window opens** with the app — any crash or error will appear there.
+
+Run it:
+```bash
+open dist/TurboCopy.app
+```
+Or double-click. Watch the Terminal window for the error message.
+
+## Step 2: Or run the binary directly
+
+```bash
+cd dist
 ./TurboCopy.app/Contents/MacOS/TurboCopy
 ```
 
-The error message will appear in the terminal.
+The error will print in the terminal. **Copy the full error and share it** so we can fix it.
 
-**Or check the crash log:**
+## Step 3: Check the crash log
 1. Open **Console** app (Applications → Utilities)
 2. Select your Mac in the sidebar
 3. Search for "TurboCopy" or look in **Crash Reports**

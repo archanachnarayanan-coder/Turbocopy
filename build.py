@@ -9,13 +9,16 @@ def main():
     print("Building TurboCopy...")
 
     is_mac = platform.system() == "Darwin"
+    debug = "--debug" in sys.argv
 
     if is_mac:
-        # Mac: Use spec with BUNDLE to create proper TurboCopy.app (double-clickable)
+        spec = "turbo_copy_mac_debug.spec" if debug else "turbo_copy_mac.spec"
+        if debug:
+            print("DEBUG MODE: Build will show a Terminal window with errors when app runs.")
         result = subprocess.run([
             sys.executable, "-m", "PyInstaller",
             "--noconfirm",
-            "turbo_copy_mac.spec"
+            spec
         ])
         if result.returncode == 0:
             print("\nBuild complete! Output is in: dist/TurboCopy.app")

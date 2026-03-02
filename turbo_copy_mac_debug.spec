@@ -1,6 +1,6 @@
-# -*- mode: python ; coding: utf-8 -*-
-# Mac-only spec: creates TurboCopy.app (double-clickable app bundle)
-# Build on Mac: pyinstaller turbo_copy_mac.spec
+# Mac debug spec: console=True shows errors in Terminal
+# Build: pyinstaller turbo_copy_mac_debug.spec
+# Run from Terminal to see crash: ./dist/TurboCopy.app/Contents/MacOS/TurboCopy
 
 block_cipher = None
 
@@ -23,13 +23,13 @@ exe = EXE(
     pyz,
     a.scripts,
     [],
-    exclude_binaries=True,   # onedir: binaries go to COLLECT
+    exclude_binaries=True,
     name='TurboCopy',
-    debug=False,
+    debug=True,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
-    console=False,
+    upx=False,   # Disable UPX for easier debugging
+    console=True,   # Opens Terminal - errors will be visible
 )
 
 coll = COLLECT(
@@ -38,7 +38,7 @@ coll = COLLECT(
     a.zipfiles,
     a.datas,
     strip=False,
-    upx=True,
+    upx=False,
     upx_exclude=[],
     name='TurboCopy',
 )
