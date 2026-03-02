@@ -37,7 +37,10 @@ python build.py
 
 The output goes to `dist/` — `TurboCopy.exe` (Windows) or `TurboCopy.app` (Mac). Users can run without Python.
 
+<<<<<<< HEAD
 **Note:** Build on each platform: Windows for .exe, Mac for .app. Zip `TurboCopy.app` before uploading to GitHub.
+=======
+>>>>>>> afabfd3107602d0dbd07a6d63920e1b6ee7538fd
 
 ## How to Run
 
