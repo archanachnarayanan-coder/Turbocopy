@@ -9,8 +9,8 @@ A cross-platform GUI for copying large numbers of files with fast transfers and 
 
 **[Download latest release](releases)** — No Python required.
 
-- **Windows**: `TurboCopy.exe`
-- **macOS**: `TurboCopy` (build on Mac required)
+- **Windows**: `TurboCopy.exe` — double-click to run
+- **macOS**: `TurboCopy.app` — unzip, then double-click (no chmod needed)
 
 ## Features
 
@@ -35,9 +35,9 @@ Build a standalone app so users don't need to install Python:
 python build.py
 ```
 
-The output goes to `dist/` — `TurboCopy.exe` (Windows) or `TurboCopy` (Mac). Users can run it without Python.
+The output goes to `dist/` — `TurboCopy.exe` (Windows) or `TurboCopy.app` (Mac). Users can run without Python.
 
-**Note:** The Mac binary must be built on a Mac. Build the Windows exe on Windows, and the Mac binary on macOS, then upload both to your GitHub Release.
+**Note:** Build on each platform: Windows for .exe, Mac for .app. Zip `TurboCopy.app` before uploading to GitHub.
 
 ## How to Run
 

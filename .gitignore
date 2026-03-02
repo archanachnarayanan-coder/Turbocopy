@@ -1,6 +1,7 @@
 # PyInstaller
 build/
 dist/
+*.spec.bak
 
 # Python
 __pycache__/
